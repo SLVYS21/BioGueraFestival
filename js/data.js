@@ -10,14 +10,15 @@ window.FBG = {
      api  : URL de l'API billetterie (dossier billetterie-api/, sur le VPS), dépôt SLVYS21/bioguera-billetterie-api.
             Code de réduction Chariow : ajouter ?code=XXXX à l'adresse du site (ex. invitations).
             Vide = vente fermée : le bouton affiche « ouverture prochaine ».
-     site : adresse publique du site, encodée dans le QR des billets.
+     site : adresse publique du site, encodée dans le QR des billets (les anciens QR GitHub Pages restent valables :
+            seul le n° compte au scan).
      categories : affichage seulement. Le prix réellement payé est celui du produit Chariow
             (lié à chaque catégorie par CHARIOW_STD / CHARIOW_PREMIUM / CHARIOW_VIP dans le .env de l'API). Les garder identiques.
      jusqua : fin de vente sur le site (à reporter aussi dans STANDARD_UNTIL côté API).
      avantages : ce que la catégorie inclut, affiché sous le prix (vide = rien affiché). */
   billetterie: {
     api: 'https://bioguera.bisous.me',
-    site: 'https://slvys21.github.io/BioGueraFestival',
+    site: 'https://bio-guera-festival.vercel.app',
     categories: [
       { id: 'standard', nom: 'Standard', prix: 1000, note: 'Prévente jusqu’au 10 décembre', jusqua: '2026-12-10T23:59:59+01:00', avantages: [] },
       { id: 'premium', nom: 'Premium', prix: 5000, note: 'Prix unique', avantages: [] },

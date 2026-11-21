@@ -200,8 +200,15 @@
       try { const t = await getTicket(q.get('k')); save(t); await show(t, { first: true }); }
       catch (x) { notice('Billet introuvable', x.status === 404 ? 'Ce lien ne correspond à aucun billet du festival.' : 'Connexion impossible pour le moment.'); }
     }
-    const pending = store.get('fbg.pending');
-    const fresh = pending && Date.now() - pending.at < 24 * 3600 * 1000;
+    let pending = store.get('fbg.pending');
+    let fresh = pending && Date.now() - pending.at < 24 * 3600 * 1000;
+    // ?ref= : posé par l'API dans l'adresse de retour Chariow. Fait foi même si ce navigateur n'a pas
+    // lancé l'achat (paiement terminé dans une autre appli) ou si une ancienne tentative traîne.
+    const ref = q.get('ref');
+    if (ref && /^[\w-]{8,40}$/.test(ref)) {
+      pending = { sale_id: ref, ref, at: Date.now() };
+      fresh = true;
+    }
     if (fresh) poll(pending);
     else if (q.get('retour')) {
       notice('Paiement terminé ?', 'Votre n° de billet vous a été envoyé par e-mail. Collez-le ci-dessous pour afficher votre billet.');

@@ -534,7 +534,9 @@
       };
       if (showErrs(validate(v))) return;
       if (promo) v.discount_code = promo;
-      const { tier: _t, discount_code: _d, ...buyer } = v;
+      // Retour après paiement sur CE site (Vercel, GitHub Pages…) : le billet en attente y est mémorisé.
+      v.return_to = location.origin + location.pathname.replace(/[^/]*$/, '');
+      const { tier: _t, discount_code: _d, return_to: _r, ...buyer } = v;
       store.set('fbg.buyer', buyer);
       buy.classList.add('is-loading');
       buy.setAttribute('aria-busy', 'true');
@@ -547,7 +549,7 @@
         });
         const d = await r.json().catch(() => ({}));
         if (r.ok && d.sale_id && (d.checkout_url || d.step === 'completed')) {
-          store.set('fbg.pending', { sale_id: d.sale_id, tier, at: Date.now() });
+          store.set('fbg.pending', { sale_id: d.sale_id, ref: d.ref || null, tier, at: Date.now() });
           say(d.checkout_url ? 'Redirection vers le paiement…' : 'Billet offert : création en cours…', 'ok');
           location.href = d.checkout_url || 'billet.html?retour=1';
           return;
