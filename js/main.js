@@ -486,6 +486,11 @@
     };
     form.addEventListener('change', (e) => { if (e.target.name === 'tier') { tier = e.target.value; render(); } });
 
+    // Code de réduction Chariow passé dans l'URL (?code=XXXX) : invitations, partenaires, tests.
+    // Pas de champ visible : évite la chasse aux codes. Chariow valide le code (actif, quota, produit).
+    let promo = (new URLSearchParams(location.search).get('code') || '').trim().toUpperCase();
+    if (!/^[A-Z0-9_-]{2,40}$/.test(promo)) promo = '';
+
     if (!open) {
       buy.disabled = true;
       buyLbl.textContent = 'Billetterie en ligne : ouverture prochaine';
@@ -528,7 +533,8 @@
         country: sel.value,
       };
       if (showErrs(validate(v))) return;
-      const { tier: _t, ...buyer } = v;
+      if (promo) v.discount_code = promo;
+      const { tier: _t, discount_code: _d, ...buyer } = v;
       store.set('fbg.buyer', buyer);
       buy.classList.add('is-loading');
       buy.setAttribute('aria-busy', 'true');
@@ -542,10 +548,11 @@
         const d = await r.json().catch(() => ({}));
         if (r.ok && d.sale_id && (d.checkout_url || d.step === 'completed')) {
           store.set('fbg.pending', { sale_id: d.sale_id, tier, at: Date.now() });
-          say('Redirection vers le paiement…', 'ok');
+          say(d.checkout_url ? 'Redirection vers le paiement…' : 'Billet offert : création en cours…', 'ok');
           location.href = d.checkout_url || 'billet.html?retour=1';
           return;
         }
+        if (d.code === 'discount') promo = ''; // code refusé : le prochain essai se fait au prix normal
         if (d.errors) showErrs(d.errors);
         say(d.error || 'Le paiement n’a pas pu démarrer. Réessayez.', 'err');
       } catch {
@@ -557,6 +564,7 @@
       }
     });
     render();
+    if (open && promo) say(`Code ${promo} appliqué : la réduction s’affiche à l’étape suivante.`, 'ok');
 
     // Billet : légère inclinaison suivant le pointeur (souris uniquement)
     if (!reduce && matchMedia('(hover: hover) and (pointer: fine)').matches) {
