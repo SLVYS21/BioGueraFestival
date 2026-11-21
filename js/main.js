@@ -418,79 +418,154 @@
   }
 
   /* =======================================================================
-     BILLETTERIE
+     BILLETTERIE — paiement Chariow via l'API billetterie (billetterie-api/), billet = licence
      ======================================================================= */
   const form = $('[data-order]');
   if (form) {
     const B = D.billetterie;
-    let qty = 1;
-    const qtyEl = $('[data-qty]', form);
-    const totalEl = $('[data-total]', form);
-    const ticket = $('[data-ticket]');
-    const minus = $('[data-step="-1"]', form);
-    const plus = $('[data-step="1"]', form);
+    const open = !!B.api;
+    const store = {
+      get: (k) => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } },
+      set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* navigation privée */ } },
+    };
+    const now = Date.now();
+    const cats = B.categories.map((c) => ({ ...c, closed: !!c.jusqua && now > Date.parse(c.jusqua) }));
+    const firstOpen = cats.find((c) => !c.closed) || cats[0];
+    let tier = firstOpen.id;
+    const cat = () => cats.find((c) => c.id === tier);
+
     const buy = $('[data-buy]', form);
     const buyLbl = $('[data-buy-label]', form);
     const hint = $('[data-hint]', form);
-    const field = $('.field', form);
-    const input = $('input[name="nom"]', form);
-    const open = !!B.whatsapp;
+    const canvas = $('[data-tix-canvas]');
+    const prev = $('[data-ticket]');
 
-    $('[data-pay]', form).innerHTML = B.operateurs.map((o, i) => `
-      <label><input type="radio" name="pay" value="${o.id}" ${i === 0 ? 'checked' : ''}><span><svg viewBox="0 0 24 24"><use href="#check"/></svg>${o.label}</span></label>`).join('');
+    $('[data-tiers]', form).innerHTML = cats.map((c) => `
+      <label class="tier tier--${c.id}${c.closed ? ' is-closed' : ''}">
+        <input type="radio" name="tier" value="${c.id}"${c.id === tier ? ' checked' : ''}${c.closed ? ' disabled' : ''}>
+        <span class="tier__body">
+          <span class="tier__name">${c.nom}</span>
+          <span class="tier__price">${fmt(c.prix)}<small>F CFA</small></span>
+          <span class="tier__note">${c.closed ? 'Prévente terminée' : c.note}</span>
+          ${c.avantages && c.avantages.length ? `<span class="tier__perks">${c.avantages.join(' · ')}</span>` : ''}
+        </span>
+      </label>`).join('');
 
-    const alphabet = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
-    $('[data-tid]').textContent = Array.from({ length: 8 }, () => alphabet[Math.floor(Math.random() * alphabet.length)]).join('');
+    const sel = $('[data-country]', form);
+    sel.innerHTML = B.pays.map((p) => `<option value="${p.code}">${p.code} ${p.ind}</option>`).join('');
+    const phone = form.elements.phone;
+    const syncPh = () => { phone.placeholder = (B.pays.find((p) => p.code === sel.value) || B.pays[0]).ex; };
+    sel.addEventListener('change', syncPh);
 
-    const bump = (n) => { n.classList.remove('tick'); void n.offsetWidth; n.classList.add('tick'); };
-    const render = (animate) => {
-      const total = qty * B.prix;
-      qtyEl.textContent = qty;
-      totalEl.textContent = `${fmt(total)} F CFA`;
-      $('[data-ticket-qty]').textContent = qty;
-      $('[data-plural]').textContent = qty > 1 ? 's' : '';
-      $('[data-ticket-price]').textContent = fmt(total);
-      ticket.dataset.n = Math.min(qty, 3);
-      minus.disabled = qty <= 1;
-      plus.disabled = qty >= B.max;
-      if (open) buyLbl.textContent = `Réserver ${qty} billet${qty > 1 ? 's' : ''} · ${fmt(total)} F`;
-      if (animate && !reduce) { bump(totalEl); bump($('[data-ticket-price]')); bump(qtyEl); }
+    // Pré-remplissage : un 2e billet (groupe, famille) se prend en quelques secondes
+    const saved = store.get('fbg.buyer');
+    if (saved) ['first_name', 'last_name', 'email', 'phone', 'country'].forEach((k) => { if (saved[k]) form.elements[k].value = saved[k]; });
+    syncPh();
+
+    /* Aperçu : vrai billet généré, tamponné SPÉCIMEN */
+    const specimens = {};
+    const drawPreview = () => {
+      if (!window.FBGTicket || !canvas) return;
+      const id = tier;
+      const p = specimens[id] || (specimens[id] = window.FBGTicket.render({ key: 'FBG26-SPECIMEN', tier: id, holder: 'Votre nom ici', status: 'sample' }));
+      p.then((c) => {
+        if (id !== tier) return;
+        canvas.width = c.width;
+        canvas.height = c.height;
+        canvas.getContext('2d').drawImage(c, 0, 0);
+        canvas.setAttribute('aria-label', `Aperçu du billet ${cat().nom}, ${fmt(cat().prix)} F CFA`);
+        if (!reduce) { prev.classList.remove('is-swap'); void prev.offsetWidth; prev.classList.add('is-swap'); }
+      }).catch(() => {});
     };
-    [minus, plus].forEach((b) => b.addEventListener('click', () => {
-      qty = Math.max(1, Math.min(B.max, qty + +b.dataset.step));
-      render(true);
-    }));
+
+    const render = () => {
+      const c = cat();
+      if (open) buyLbl.textContent = `Payer ${fmt(c.prix)} F · ${c.nom}`;
+      prev.dataset.tier = tier;
+      drawPreview();
+    };
+    form.addEventListener('change', (e) => { if (e.target.name === 'tier') { tier = e.target.value; render(); } });
 
     if (!open) {
       buy.disabled = true;
-      buyLbl.textContent = 'Réservation en ligne : ouverture prochaine';
-      hint.textContent = 'Les réservations ouvrent très prochainement sur cette page.';
+      buyLbl.textContent = 'Billetterie en ligne : ouverture prochaine';
+      hint.textContent = 'La vente ouvre très prochainement sur cette page.';
     }
-    input.addEventListener('input', () => field.classList.remove('is-err'));
-    form.addEventListener('submit', (e) => {
+
+    /* Validation : message sous le champ fautif, focus sur le premier */
+    const FIELDS = ['first_name', 'last_name', 'email', 'phone'];
+    const setErr = (name, msg) => {
+      const f = form.elements[name].closest('.field');
+      f.classList.toggle('is-err', !!msg);
+      $(`[data-err="${name}"]`, form).textContent = msg || '';
+    };
+    FIELDS.forEach((n) => form.elements[n].addEventListener('input', () => setErr(n, '')));
+    const validate = (v) => {
+      const e = {};
+      if (!v.first_name) e.first_name = 'Indiquez votre prénom.';
+      if (!v.last_name) e.last_name = 'Indiquez votre nom.';
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.email)) e.email = 'Adresse e-mail invalide (ex. aicha@exemple.com).';
+      if (v.phone.replace(/\D/g, '').length < 8) e.phone = 'Numéro trop court : indiquez le numéro qui va payer.';
+      return e;
+    };
+    const showErrs = (errs) => {
+      FIELDS.forEach((n) => setErr(n, errs[n]));
+      const first = FIELDS.find((n) => errs[n]);
+      if (first) form.elements[first].focus();
+      return !!first;
+    };
+    const say = (msg, kind) => { hint.textContent = msg; hint.className = `order__hint${kind ? ` is-${kind}` : ''}`; };
+
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      if (!open) return;
-      if (input.value.trim().length < 3) { field.classList.add('is-err'); input.focus(); return; }
-      const op = B.operateurs.find((o) => o.id === form.pay.value).label;
-      const msg = `Bonjour Herit'Art, je souhaite réserver ${qty} billet${qty > 1 ? 's' : ''} pour la Soirée spectacle du Festival Bio Guera (vendredi 18/12/2026, 17h, JPN Porto-Novo).\nTotal : ${fmt(qty * B.prix)} F CFA\nPaiement : ${op}\nNom : ${input.value.trim()}`;
+      if (!open || buy.classList.contains('is-loading')) return;
+      const v = {
+        tier,
+        first_name: form.elements.first_name.value.trim(),
+        last_name: form.elements.last_name.value.trim(),
+        email: form.elements.email.value.trim(),
+        phone: form.elements.phone.value.trim(),
+        country: sel.value,
+      };
+      if (showErrs(validate(v))) return;
+      const { tier: _t, ...buyer } = v;
+      store.set('fbg.buyer', buyer);
       buy.classList.add('is-loading');
-      setTimeout(() => {
+      buy.setAttribute('aria-busy', 'true');
+      say('Connexion au paiement sécurisé…');
+      const ctrl = new AbortController();
+      const to = setTimeout(() => ctrl.abort(), 20000);
+      try {
+        const r = await fetch(`${B.api.replace(/\/$/, '')}/checkout`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(v), signal: ctrl.signal,
+        });
+        const d = await r.json().catch(() => ({}));
+        if (r.ok && d.sale_id && (d.checkout_url || d.step === 'completed')) {
+          store.set('fbg.pending', { sale_id: d.sale_id, tier, at: Date.now() });
+          say('Redirection vers le paiement…', 'ok');
+          location.href = d.checkout_url || 'billet.html?retour=1';
+          return;
+        }
+        if (d.errors) showErrs(d.errors);
+        say(d.error || 'Le paiement n’a pas pu démarrer. Réessayez.', 'err');
+      } catch {
+        say('Connexion impossible. Vérifiez votre réseau, puis réessayez.', 'err');
+      } finally {
+        clearTimeout(to);
         buy.classList.remove('is-loading');
-        hint.textContent = 'WhatsApp s’ouvre avec votre demande pré-remplie. Envoyez-la pour recevoir les instructions de paiement.';
-        hint.classList.add('is-ok');
-        window.open(`https://wa.me/${B.whatsapp}?text=${encodeURIComponent(msg)}`, '_blank', 'noopener');
-      }, 500);
+        buy.removeAttribute('aria-busy');
+      }
     });
-    render(false);
+    render();
 
     // Billet : légère inclinaison suivant le pointeur (souris uniquement)
     if (!reduce && matchMedia('(hover: hover) and (pointer: fine)').matches) {
-      ticket.addEventListener('pointermove', (e) => {
-        const r = ticket.getBoundingClientRect();
-        ticket.style.setProperty('--ry', `${((e.clientX - r.left) / r.width - 0.5) * 10}deg`);
-        ticket.style.setProperty('--rx', `${-((e.clientY - r.top) / r.height - 0.5) * 8}deg`);
+      prev.addEventListener('pointermove', (e) => {
+        const r = prev.getBoundingClientRect();
+        prev.style.setProperty('--ry', `${((e.clientX - r.left) / r.width - 0.5) * 10}deg`);
+        prev.style.setProperty('--rx', `${-((e.clientY - r.top) / r.height - 0.5) * 8}deg`);
       });
-      ticket.addEventListener('pointerleave', () => { ticket.style.setProperty('--rx', '0deg'); ticket.style.setProperty('--ry', '0deg'); });
+      prev.addEventListener('pointerleave', () => { prev.style.setProperty('--rx', '0deg'); prev.style.setProperty('--ry', '0deg'); });
     }
   }
 })();

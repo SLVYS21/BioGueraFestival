@@ -40,6 +40,8 @@
   <symbol id="plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
   <symbol id="minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
   <symbol id="check" viewBox="0 0 24 24"><path d="M4.5 12.5 9.5 17.5 19.5 6.5"/></symbol>
+  <symbol id="fb" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M13.6 21v-7.4h2.6l.4-3.1h-3V8.6c0-.9.3-1.5 1.5-1.5h1.6V4.3c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4v2.3H7.9v3.1h2.6V21z"/></symbol>
+  <symbol id="ig" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.2" cy="6.8" r="1.2" fill="currentColor"/></symbol>
 </svg>
 
 <!-- ============ NAVIGATION ============ -->
@@ -68,7 +70,10 @@
       <a href="#billetterie"><small>05</small>Billetterie</a>
       <a href="#infos"><small>06</small>Infos pratiques</a>
     </nav>
-    <p class="menu__date">Vendredi 18 décembre 2026 · Porto-Novo</p>
+    <div class="menu__foot">
+      <p class="menu__date">Vendredi 18 décembre 2026 · Porto-Novo</p>
+      <ul class="social social--menu" aria-label="Réseaux sociaux du festival"><li><a href="https://www.facebook.com/profile.php?id=61588753120825" target="_blank" rel="noopener me" aria-label="Facebook, Festival Bio Guera (nouvel onglet)"><svg aria-hidden="true"><use href="#fb"/></svg></a></li><li><a href="https://www.instagram.com/festivalbioguera/" target="_blank" rel="noopener me" aria-label="Instagram, @festivalbioguera (nouvel onglet)"><svg aria-hidden="true"><use href="#ig"/></svg></a></li></ul>
+    </div>
   </div>
 </header>
 
@@ -94,7 +99,7 @@
     </h1>
     <p class="hero__lead" data-in>Le 17 décembre 1916, Bio Guéra tombait à Baoura après avoir refusé l’impôt, la conscription et le travail forcé. Le lendemain, 110 ans plus tard, Porto-Novo lui consacre une journée.</p>
     <div class="hero__ctas" data-in>
-      <a class="btn btn--accent" href="#billetterie"><span>Prendre mon billet · 1 000 F</span><span class="btn__ic"><svg><use href="#arrow"/></svg></span></a>
+      <a class="btn btn--accent" href="#billetterie"><span>Billets dès 1 000 F</span><span class="btn__ic"><svg><use href="#arrow"/></svg></span></a>
       <a class="btn btn--ghost" href="#histoire"><span>Découvrir son histoire</span><span class="btn__ic"><svg><use href="#arrow"/></svg></span></a>
     </div>
   </div>
@@ -220,7 +225,7 @@
         <p>Au Jardin des Plantes et de la Nature, la mémoire passe par la scène : musique, danse et récit pour faire revivre la geste du cavalier du Borgou.</p>
         <ul class="meta">
           <li><svg><use href="#pin"/></svg>JPN – Jardin des Plantes et de la Nature, Porto-Novo</li>
-          <li><svg><use href="#ticket"/></svg>Entrée 1 000 F CFA · placement libre</li>
+          <li><svg><use href="#ticket"/></svg>Billets Standard 1 000 F · Premium 5 000 F · VIP 10 000 F</li>
         </ul>
         <a class="btn btn--accent btn--sm" href="#billetterie"><span>Réserver ma place</span><span class="btn__ic"><svg><use href="#arrow"/></svg></span></a>
       </div>
@@ -284,48 +289,36 @@
     <div class="tix__intro">
       <p class="kicker kicker--light" data-in><svg class="kicker__chev"><use href="#chev"/></svg>Billetterie</p>
       <h2 id="tix-title" class="h2 h2--light" data-in>Votre place pour la soirée spectacle.</h2>
-      <p class="tix__lead" data-in>Un billet unique, placement libre, valable le 18 décembre à partir de 17 h au JPN. Chaque billet porte un code individuel contrôlé à l’entrée.</p>
+      <p class="tix__lead" data-in>Trois catégories, un billet nominatif par paiement. Payez par Mobile Money ou carte : votre billet s’affiche aussitôt, avec un QR code contrôlé à l’entrée du JPN.</p>
 
       <form class="order" data-order novalidate data-in>
-        <fieldset class="order__row">
-          <legend>Nombre de billets</legend>
-          <div class="stepper">
-            <button type="button" data-step="-1" aria-label="Retirer un billet"><svg><use href="#minus"/></svg></button>
-            <output data-qty aria-live="polite">1</output>
-            <button type="button" data-step="1" aria-label="Ajouter un billet"><svg><use href="#plus"/></svg></button>
+        <fieldset>
+          <legend>Catégorie</legend>
+          <div class="tiers" data-tiers role="radiogroup"></div>
+        </fieldset>
+        <div class="order__pair">
+          <label class="field"><span>Prénom</span><input name="first_name" autocomplete="given-name" required maxlength="50" placeholder="Aïcha"><em class="field__err" data-err="first_name"></em></label>
+          <label class="field"><span>Nom</span><input name="last_name" autocomplete="family-name" required maxlength="50" placeholder="Bio Sanni"><em class="field__err" data-err="last_name"></em></label>
+        </div>
+        <label class="field"><span>E-mail</span><input type="email" name="email" autocomplete="email" inputmode="email" required maxlength="255" placeholder="aicha@exemple.com"><small class="field__help">Une copie du billet y est envoyée.</small><em class="field__err" data-err="email"></em></label>
+        <div class="field">
+          <span id="tel-lbl">Téléphone (Mobile Money)</span>
+          <div class="tel">
+            <select name="country" aria-label="Pays de l’indicatif" data-country></select>
+            <input type="tel" name="phone" autocomplete="tel-national" inputmode="tel" required aria-labelledby="tel-lbl" placeholder="01 97 00 00 00">
           </div>
-          <p class="order__total">Total <b data-total>1 000 F CFA</b></p>
-        </fieldset>
-        <fieldset class="order__row">
-          <legend>Paiement mobile</legend>
-          <div class="pay" data-pay></div>
-        </fieldset>
-        <label class="field">
-          <span>Nom complet</span>
-          <input name="nom" autocomplete="name" required placeholder="Ex. Aïcha Bio Sanni">
-          <em class="field__err">Indiquez le nom qui figurera sur la réservation.</em>
-        </label>
-        <button class="btn btn--accent btn--block" type="submit" data-buy><span data-buy-label>Réserver</span><span class="btn__ic"><svg><use href="#arrow"/></svg></span></button>
-        <p class="order__hint" data-hint></p>
+          <em class="field__err" data-err="phone"></em>
+        </div>
+        <button class="btn btn--accent btn--block" type="submit" data-buy><span data-buy-label>Payer</span><span class="btn__ic"><svg><use href="#arrow"/></svg></span></button>
+        <p class="order__hint" data-hint role="status"></p>
+        <p class="order__alt"><a href="billet.html">Déjà payé ? Retrouver mon billet</a></p>
       </form>
     </div>
 
-    <div class="ticket" data-ticket aria-hidden="true">
-      <div class="ticket__main">
-        <img class="ticket__art" src="https://res.cloudinary.com/emkqaupn/image/upload/f_auto,q_auto,c_limit,w_900/festival-bio-guera/guera" alt="" loading="lazy">
-        <span class="ticket__fest">FESTIVAL</span>
-        <img class="ticket__logo" src="assets/logo_bioguera.svg" alt="">
-        <span class="ticket__ev">Soirée spectacle</span>
-        <span class="ticket__when">Ven. 18.12.2026 · 17H00</span>
-        <span class="ticket__where">JPN – Jardin des Plantes et de la Nature, Porto-Novo</span>
-        <span class="ticket__id">Billet n° FBG26-<b data-tid>XXXXXXX</b> · Placement libre</span>
-      </div>
-      <div class="ticket__stub">
-        <span class="ticket__qty"><b data-ticket-qty>1</b> billet<span data-plural></span></span>
-        <span class="ticket__price"><b data-ticket-price>1 000</b><small>F CFA</small></span>
-        <span class="ticket__ev2">Soirée spectacle<br>18.12.2026 · 17H00</span>
-      </div>
-    </div>
+    <figure class="tixprev" data-ticket>
+      <canvas data-tix-canvas width="2232" height="794" role="img" aria-label="Aperçu du billet Standard"></canvas>
+      <figcaption>Spécimen. Votre QR code et votre n° de billet sont générés après le paiement.</figcaption>
+    </figure>
   </div>
 </section>
 
@@ -345,13 +338,13 @@
       <article class="venue" data-in>
         <span class="venue__time">17H00</span>
         <h3>JPN – Jardin des Plantes et de la Nature</h3>
-        <p>Soirée spectacle. Entrée 1 000 F CFA, billet à présenter sur téléphone ou imprimé.</p>
+        <p>Soirée spectacle. Billet à QR code, à présenter sur téléphone ou imprimé.</p>
         <a class="link" href="https://www.google.com/maps/search/?api=1&query=Jardin+des+Plantes+et+de+la+Nature+Porto-Novo" target="_blank" rel="noopener">Itinéraire<svg><use href="#arrow"/></svg></a>
       </article>
       <article class="venue venue--faq" data-in>
         <h3>Bon à savoir</h3>
-        <details><summary>Le match est-il payant ?</summary><p>Le billet à 1 000 F CFA concerne la soirée spectacle. Les conditions d’accès au match sont communiquées par Herit’Art.</p></details>
-        <details><summary>Puis-je acheter sur place ?</summary><p>Réservez en ligne pour entrer sans attendre : votre code est contrôlé directement à l’entrée.</p></details>
+        <details><summary>Le match est-il payant ?</summary><p>Les billets en ligne concernent la soirée spectacle au JPN. Les conditions d’accès au match sont communiquées par Herit’Art.</p></details>
+        <details><summary>Puis-je acheter sur place ?</summary><p>Achetez en ligne pour entrer sans attendre : votre QR code est scanné directement à l’entrée.</p></details>
         <details><summary>Venir depuis Cotonou ?</summary><p>Comptez 45 min à 1 h 30 depuis Cotonou selon la circulation. Partez tôt pour le coup d’envoi de 9 h.</p></details>
       </article>
     </div>
@@ -377,6 +370,8 @@
     <div class="foot__org">
       <span>Organisé par</span>
       <img src="assets/ha_text.png" alt="Herit'Art" height="28">
+      <span class="foot__label">Suivez-nous</span>
+      <ul class="social social--foot" aria-label="Réseaux sociaux du festival"><li><a href="https://www.facebook.com/profile.php?id=61588753120825" target="_blank" rel="noopener me" aria-label="Facebook, Festival Bio Guera (nouvel onglet)"><svg aria-hidden="true"><use href="#fb"/></svg></a></li><li><a href="https://www.instagram.com/festivalbioguera/" target="_blank" rel="noopener me" aria-label="Instagram, @festivalbioguera (nouvel onglet)"><svg aria-hidden="true"><use href="#ig"/></svg></a></li></ul>
     </div>
     <nav class="foot__nav" aria-label="Pied de page">
       <a href="#histoire">Son histoire</a><a href="#carte">Sur la carte</a><a href="#programme">Programme</a><a href="#match">Le match</a><a href="#billetterie">Billetterie</a>
@@ -390,6 +385,8 @@
 
 <script src="js/data.js"></script>
 <script src="js/benin-map.js"></script>
+<script src="js/vendor/qrcode.min.js"></script>
+<script src="js/ticket.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

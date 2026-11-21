@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mon billet — Festival Bio Guera</title>
+<meta name="description" content="Affichez, téléchargez et retrouvez votre billet du Festival Bio Guera, vendredi 18 décembre 2026 au JPN, Porto-Novo.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#2D4BCF">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/pages.css">
+</head>
+<body class="page">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="chev" viewBox="0 0 20 30"><path d="M2 2h16l-8 8.5z"/><path d="M4.5 13.5h11L10 19.5z"/><path d="M7 24h6l-3 4z"/></symbol>
+  <symbol id="arrow" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></symbol>
+  <symbol id="down" viewBox="0 0 24 24"><path d="M12 4v12M6 11l6 6 6-6M5 20h14"/></symbol>
+  <symbol id="share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4"/></symbol>
+</svg>
+
+<header class="pnav">
+  <div class="wrap pnav__in">
+    <a class="pnav__brand" href="./"><img src="assets/logo_bioguera.svg" alt="Festival Bio Guera, retour à l’accueil" width="120" height="44"></a>
+    <a class="pnav__link" href="./#billetterie">Acheter un billet</a>
+  </div>
+</header>
+
+<main class="wrap pmain" id="main">
+  <p class="kicker kicker--light"><svg class="kicker__chev"><use href="#chev"/></svg>Vendredi 18 décembre 2026 · JPN, Porto-Novo</p>
+  <h1 class="h2 h2--light" data-title>Mon billet</h1>
+  <p class="plead" data-lead>Retrouvez ici vos billets. Ils restent enregistrés sur ce téléphone, même hors connexion.</p>
+
+  <section class="wait" data-wait hidden aria-live="polite">
+    <span class="wait__ring" aria-hidden="true"></span>
+    <div>
+      <p class="wait__title" data-wait-title>Confirmation de votre paiement…</p>
+      <p class="wait__text" data-wait-text>Validez le paiement sur votre téléphone si ce n’est pas encore fait. La confirmation prend en général moins d’une minute : gardez cette page ouverte.</p>
+    </div>
+  </section>
+
+  <section class="notice" data-notice hidden role="alert">
+    <p class="notice__title" data-notice-title></p>
+    <p data-notice-text></p>
+    <a class="btn btn--accent btn--sm" href="./#billetterie" data-notice-cta hidden><span>Réessayer</span><span class="btn__ic"><svg><use href="#arrow"/></svg></span></a>
+  </section>
+
+  <div class="tks" data-list></div>
+
+  <section class="lookup" aria-labelledby="lookup-title">
+    <h2 class="h3" id="lookup-title">Retrouver un billet</h2>
+    <p>Votre n° de billet figure dans l’e-mail de confirmation de Chariow (rubrique « clé de licence »).</p>
+    <form class="lookup__form" data-lookup novalidate>
+      <label class="field"><span>N° de billet</span><input name="key" autocomplete="off" autocapitalize="characters" spellcheck="false" required placeholder="Collez le n° reçu par e-mail"><em class="field__err" data-lookup-err></em></label>
+      <button class="btn btn--light" type="submit"><span>Afficher</span><span class="btn__ic"><svg><use href="#arrow"/></svg></span></button>
+    </form>
+  </section>
+
+  <ul class="howto">
+    <li><b>1 billet = 1 entrée.</b> Le QR code est scanné une seule fois à l’entrée du JPN.</li>
+    <li><b>Sur téléphone ou imprimé.</b> Montez la luminosité au maximum au moment du contrôle.</li>
+    <li><b>Ne publiez pas votre QR code.</b> La première personne scannée entre, la suivante est refusée.</li>
+  </ul>
+</main>
+
+<script src="js/data.js"></script>
+<script src="js/vendor/qrcode.min.js"></script>
+<script src="js/ticket.js"></script>
+<script src="js/billet.js"></script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tableau de bord billetterie — Festival Bio Guera</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#0A1440">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/pages.css">
+</head>
+<body class="page page--ctrl">
+
+<section class="ctrl-setup" data-setup>
+  <img src="assets/logo_bioguera.svg" alt="Festival Bio Guera" width="150" height="55">
+  <h1 class="ctrl-setup__title">Tableau de bord</h1>
+  <p class="ctrl-setup__lead">Ventes et entrées en direct. Réservé à l’organisation (Herit’Art).</p>
+  <form data-setup-form novalidate>
+    <label class="field"><span>Code organisation</span><input name="pin" type="password" autocomplete="current-password" required></label>
+    <p class="ctrl-err" data-setup-err role="alert"></p>
+    <button class="btn btn--accent btn--block" type="submit"><span>Ouvrir le tableau de bord</span><span class="btn__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span></button>
+  </form>
+</section>
+
+<div class="adm" data-dash hidden>
+  <header class="adm__top">
+    <img src="assets/logo_bioguera.svg" alt="Festival Bio Guera" width="96" height="35">
+    <p class="adm__live" data-live><span class="adm__dot" aria-hidden="true"></span><span data-live-text>Connexion…</span></p>
+    <button class="btn btn--ghost btn--sm" type="button" data-export><span>Exporter (CSV)</span></button>
+    <button class="ctrl__quit" type="button" data-quit>Quitter</button>
+  </header>
+
+  <main class="adm__main wrap">
+    <section class="adm__kpis" aria-label="Chiffres clés">
+      <div class="kpi"><p class="kpi__label">Billets vendus</p><p class="kpi__value" data-k-sold>—</p><p class="kpi__sub" data-k-sold-sub></p></div>
+      <div class="kpi"><p class="kpi__label">Recette</p><p class="kpi__value" data-k-rev>—</p><p class="kpi__sub">F CFA encaissés via Chariow</p></div>
+      <div class="kpi"><p class="kpi__label">Entrées</p><p class="kpi__value" data-k-in>—</p><p class="kpi__sub" data-k-in-sub></p></div>
+      <div class="kpi"><p class="kpi__label">Rythme</p><p class="kpi__value" data-k-pace>—</p><p class="kpi__sub">entrées sur les 15 dernières minutes</p></div>
+    </section>
+
+    <section class="adm__card">
+      <h2 class="adm__h">Par catégorie</h2>
+      <div class="adm__scroll">
+        <table class="adm__table">
+          <thead><tr><th scope="col">Catégorie</th><th scope="col">Vendus</th><th scope="col">Recette</th><th scope="col">Entrés</th><th scope="col" class="adm__bar-col">Taux d’entrée</th></tr></thead>
+          <tbody data-tiers></tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="adm__cols">
+      <section class="adm__card">
+        <h2 class="adm__h">Derniers passages</h2>
+        <ol class="adm__feed" data-feed><li class="adm__empty">Aucune entrée pour l’instant.</li></ol>
+      </section>
+      <section class="adm__card">
+        <h2 class="adm__h">Retrouver un billet</h2>
+        <form class="adm__search" data-search novalidate>
+          <label class="sr-only" for="adm-q">N° de billet, e-mail ou nom</label>
+          <input id="adm-q" name="q" autocomplete="off" spellcheck="false" placeholder="N° de billet, e-mail ou nom (3 caractères min.)">
+          <button class="btn btn--light btn--sm" type="submit"><span>Chercher</span></button>
+        </form>
+        <ul class="adm__results" data-results></ul>
+      </section>
+    </div>
+
+    <p class="adm__sync" data-sync></p>
+    <ul class="adm__errors" data-errors hidden></ul>
+  </main>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

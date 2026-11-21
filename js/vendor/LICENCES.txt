@@ -1,0 +1,7 @@
+Bibliothèques tierces embarquées (copies figées, aucun appel réseau) :
+
+qrcode.min.js  — qrcode-generator 1.4.4, (c) 2009 Kazuhiko Arase, licence MIT.
+                 https://github.com/kazuhikoarase/qrcode-generator
+jsQR.min.js    — jsQR 1.4.0, (c) Cosmo Wolfe, licence Apache 2.0.
+                 https://github.com/cozmo/jsQR
+Versions minifiées par jsDelivr (Terser) à partir des paquets npm d'origine.

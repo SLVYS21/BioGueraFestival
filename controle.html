@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Contrôle des billets — Festival Bio Guera</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#0A1440">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/pages.css">
+</head>
+<body class="page page--ctrl">
+
+<section class="ctrl-setup" data-setup>
+  <img src="assets/logo_bioguera.svg" alt="Festival Bio Guera" width="150" height="55">
+  <h1 class="ctrl-setup__title">Contrôle des billets</h1>
+  <p class="ctrl-setup__lead">Réservé à l’équipe d’accueil. Chaque billet scanné ici est consommé : il ne passera plus une 2<sup>e</sup> fois.</p>
+  <form data-setup-form novalidate>
+    <label class="field"><span>Code équipe</span><input name="pin" type="password" autocomplete="current-password" required></label>
+    <label class="field"><span>Nom de la porte</span><input name="gate" maxlength="40" placeholder="Porte A" required></label>
+    <p class="ctrl-err" data-setup-err role="alert"></p>
+    <button class="btn btn--accent btn--block" type="submit"><span>Démarrer le contrôle</span><span class="btn__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span></button>
+  </form>
+</section>
+
+<section class="ctrl" data-scan hidden>
+  <header class="ctrl__top">
+    <span class="ctrl__gate" data-gate></span>
+    <span class="ctrl__count"><b data-count>0</b> entrée<span data-count-s>s</span> validée<span data-count-s2>s</span></span>
+    <button class="ctrl__quit" type="button" data-quit>Quitter</button>
+  </header>
+  <div class="ctrl__cam">
+    <video data-video playsinline muted></video>
+    <div class="ctrl__frame" aria-hidden="true"></div>
+    <p class="ctrl__camhint" data-camhint>Visez le QR code du billet</p>
+  </div>
+  <form class="ctrl__manual" data-manual novalidate>
+    <label class="sr-only" for="manual-key">N° de billet</label>
+    <input id="manual-key" name="key" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Saisir un n° de billet">
+    <button class="btn btn--light btn--sm" type="submit"><span>Vérifier</span></button>
+  </form>
+</section>
+
+<section class="res" data-result hidden role="alert" aria-live="assertive">
+  <p class="res__icon" data-res-icon aria-hidden="true"></p>
+  <h2 class="res__title" data-res-title></h2>
+  <p class="res__tier" data-res-tier></p>
+  <p class="res__name" data-res-name></p>
+  <p class="res__detail" data-res-detail></p>
+  <button class="res__next" type="button" data-res-next>Scanner le suivant</button>
+</section>
+
+<script src="js/data.js"></script>
+<script src="js/controle.js"></script>
+</body>
+</html>

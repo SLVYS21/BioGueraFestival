@@ -6,17 +6,31 @@ window.FBG = {
   kickoff: '2026-12-18T09:00:00+01:00',
   showtime: '2026-12-18T17:00:00+01:00',
 
-  /* ---------- Billetterie ----------
-     whatsapp : numéro de l'organisation au format international SANS + ni espaces (ex. 22901XXXXXXXX).
-     Tant qu'il est vide, le bouton affiche l'état « ouverture prochaine » (désactivé). */
+  /* ---------- Billetterie (paiement Chariow, billets = licences) ----------
+     api  : URL de l'API billetterie (dossier billetterie-api/, sur le VPS), ex. 'https://billetterie.mondomaine.com'.
+            Vide = vente fermée : le bouton affiche « ouverture prochaine ».
+     site : adresse publique du site, encodée dans le QR des billets.
+     categories : affichage seulement. Le prix réellement payé est celui du produit Chariow
+            (lié à chaque catégorie dans worker/wrangler.toml → TIERS). Les garder identiques.
+     jusqua : fin de vente sur le site (à reporter aussi dans STANDARD_UNTIL côté API).
+     avantages : ce que la catégorie inclut, affiché sous le prix (vide = rien affiché). */
   billetterie: {
-    prix: 1000,
-    max: 10,
-    whatsapp: '',
-    operateurs: [
-      { id: 'mtn', label: 'MTN MoMo' },
-      { id: 'moov', label: 'Moov Money' },
-      { id: 'celtiis', label: 'Celtiis Cash' },
+    api: '',
+    site: 'https://slvys21.github.io/BioGueraFestival',
+    categories: [
+      { id: 'standard', nom: 'Standard', prix: 1000, note: 'Prévente jusqu’au 10 décembre', jusqua: '2026-12-10T23:59:59+01:00', avantages: [] },
+      { id: 'premium', nom: 'Premium', prix: 5000, note: 'Prix unique', avantages: [] },
+      { id: 'vip', nom: 'VIP', prix: 10000, note: 'Prix unique', avantages: [] },
+    ],
+    pays: [
+      { code: 'BJ', nom: 'Bénin', ind: '+229', ex: '01 97 00 00 00' },
+      { code: 'TG', nom: 'Togo', ind: '+228', ex: '90 00 00 00' },
+      { code: 'NG', nom: 'Nigeria', ind: '+234', ex: '803 000 0000' },
+      { code: 'CI', nom: 'Côte d’Ivoire', ind: '+225', ex: '07 00 00 00 00' },
+      { code: 'BF', nom: 'Burkina Faso', ind: '+226', ex: '70 00 00 00' },
+      { code: 'NE', nom: 'Niger', ind: '+227', ex: '90 00 00 00' },
+      { code: 'SN', nom: 'Sénégal', ind: '+221', ex: '77 000 00 00' },
+      { code: 'FR', nom: 'France', ind: '+33', ex: '6 00 00 00 00' },
     ],
   },
 
